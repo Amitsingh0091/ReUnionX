@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | ReUnionX</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    display: flex;
+    background: #f5f7fa;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 230px;
+    height: 100vh;
+    background: #0a192f;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    transition: 0.3s;
+}
+
+.sidebar.collapsed {
+    width: 70px;
+}
+
+.sidebar.collapsed h2,
+.sidebar.collapsed span {
+    display: none;
+}
+
+.sidebar h2 {
+    color: #64ffda;
+    margin-bottom: 30px;
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background: green;
+}
+
+.sidebar ul li a.active {
+    background: #64ffda;
+    color: black;
+}
+a{
+    text-decoration: none;
+}
+
+/* Main */
+.main {
+    margin-left: 230px;
+    padding: 20px;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.main.collapsed {
+    margin-left: 70px;
+}
+
+/* Topbar */
+.topbar {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    position: relative;
+}
+
+.topbar button {
+    font-size: 18px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* NEW: Top actions */
+.top-actions{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+.search-box{
+    padding:8px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+.notif-icon{
+    font-size:18px;
+    cursor:pointer;
+}
+
+/* Profile */
+.profile-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+}
+.profile-box img{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+}
+
+/* Dropdown */
+.menu{
+    display:none;
+    position:absolute;
+    top:60px;
+    right:20px;
+    background:white;
+    width:200px;
+    border-radius:8px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.2);
+    overflow:hidden;
+}
+.menu p{
+    padding:12px;
+    margin:0;
+    cursor:pointer;
+}
+.menu p:hover{
+    background:#f1f1f1;
+}
+
+/* Cards */
+.cards {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* NEW growth */
+.growth{
+    font-size:12px;
+    display:block;
+    margin-top:5px;
+}
+.growth.up{ color:green; }
+
+/* Extra Grid */
+.extra-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+    margin-top:20px;
+}
+.activity li{
+    margin:8px 0;
+    list-style-type: none;
+}
+
+/* Buttons */
+.card button{
+    display:block;
+    width:100%;
+    margin:10px 0;
+    padding:10px;
+    border:none;
+    background:#0a192f;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+/* Chat button */
+.chat-float{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#0a192f;
+    color:white;
+    border:none;
+    padding:15px;
+    border-radius:50%;
+    font-size:18px;
+    cursor:pointer;
+}
+
+/* Chatbot Panel */
+.chatbot-panel {
+    position: fixed;
+    right: -400px;
+    top: 0;
+    width: 380px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    z-index: 999;
+}
+.chatbot-panel.active {
+    right: 0;
+}
+.chat-header {
+    background: #0a192f;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+.chatbot-panel iframe {
+    flex: 1;
+    width: 100%;
+    border: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <h2>ReUnionX</h2>
+    <ul>
+        <li><a href="#" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+        <li><a href="almini.html"><i class="fas fa-users"></i> <span>Alumni</span></a></li>
+        <li><a href="jobpage.html"><i class="fas fa-briefcase"></i> <span>Jobs</span></a></li>
+        <li><a href="event.html"><i class="fas fa-calendar"></i> <span>Events</span></a></li>
+        <li><a href="#" onclick="openChat()"><i class="fas fa-robot"></i> <span>Chatbot</span></a></li>
+    </ul>
+</div>
+
+<!-- Main -->
+<div class="main" id="main">
+
+<div class="topbar">
+    <button onclick="toggleSidebar()">☰</button>
+
+    <!-- NEW -->
+    <div class="top-actions">
+        <input type="text" placeholder="Search..." class="search-box">
+        <i class="fas fa-bell notif-icon" onclick="showNotif()"></i>
+    </div>
+
+    <div class="profile-box" onclick="toggleMenu()">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+        <span id="username">User</span>
+    </div>
+
+    <div id="menu" class="menu">
+        <p onclick="showProfile()">👤 Profile</p>
+        <p onclick="showApplications()">📄 Applications</p>
+        <p onclick="toggleDark()">🌙 Dark Mode</p>
+        <p onclick="logout()">🚪 Logout</p>
+    </div>
+</div>
+
+<!-- Profile -->
+<div id="profileSection" style="display:none; margin-top:20px;">
+    <div class="card">
+        <h3>Profile</h3>
+        <p><b>Name:</b> <span id="pname"></span></p>
+        <p><b>Email:</b> <span id="pemail"></span></p>
+    </div>
+</div>
+
+<!-- Applications -->
+<div id="appSection" style="display:none; margin-top:20px;">
+    <h3>My Applications</h3>
+    <table>
+        <tr><th>Name</th><th>Job</th><th>Company</th></tr>
+        <tbody id="appData"></tbody>
+    </table>
+</div>
+
+<!-- Cards -->
+<div class="cards">
+    <div class="card"> 
+        <a href="almini.html"><h4>Total Alumni</h4></a>
+        <p id="alumniCount">120</p>
+        <span class="growth up">+12%</span>
+    </div>
+
+    <div class="card"> 
+        <a href="jobpage.html"><h4>Jobs Posted</h4></a>
+        <p id="jobCount">45</p>
+        <span class="growth up">+8%</span>
+    </div>
+
+    <div class="card"> 
+        <a href="event.html"><h4>Events</h4></a>
+        <p id="eventCount">10</p>
+        <span class="growth up">+5%</span>
+    </div>
+</div>
+
+<!-- Extra Section -->
+<div class="extra-grid">
+
+    <div class="card">
+        <h3>Recent Activity</h3>
+        <ul class="activity">
+            <li>🟢 New alumni joined</li>
+            <li>🔵 Job posted</li>
+            <li>🟣 Event created</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Quick Actions</h3>
+        <button onclick="goPage('almini.html')">➕ Add Alumni</button>
+        <button onclick="goPage('jobpage.html')">💼 Post Job</button>
+        <button onclick="goPage('event.html')">📅 Create Event</button>
+    </div>
+
+</div>
+
+</div>
+
+<!-- Chat -->
+<button class="chat-float" onclick="openChat()">💬</button>
+
+<div class="chatbot-panel" id="chatbotPanel">
+    <div class="chat-header">
+        <h3>AI Chatbot</h3>
+        <button onclick="closeChat()">✖</button>
+    </div>
+    <iframe src="Chatbot.html"></iframe>
+</div>
+
+<script>
+
+// Existing JS (same)
+function toggleSidebar() {
+    sidebar.classList.toggle("collapsed");
+    main.classList.toggle("collapsed");
+}
+
+function toggleMenu(){
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+function showProfile(){
+    profileSection.style.display = "block";
+    appSection.style.display = "none";
+}
+
+function showApplications(){
+    appSection.style.display = "block";
+    profileSection.style.display = "none";
+}
+
+function toggleDark(){
+    document.body.style.background =
+        document.body.style.background === "black" ? "#f5f7fa" : "black";
+}
+
+function openChat(){
+    chatbotPanel.classList.add("active");
+}
+function closeChat(){
+    chatbotPanel.classList.remove("active");
+}
+
+// NEW JS
+function showNotif(){
+    alert("No new notifications");
+}
+function goPage(page){
+    window.location.href = page;
+}
+
+// User
+let user = {name:"Amit singh", email:"atul@gmail.com"};
+username.innerText = user.name;
+pname.innerText = user.name;
+pemail.innerText = user.email;
+
+// Applications
+let apps = JSON.parse(localStorage.getItem("applications")) || [];
+let html = "";
+apps.forEach(a=>{
+    html += `<tr>
+        <td>${a.name}</td>
+        <td>${a.job?.title || ""}</td>
+        <td>${a.job?.company || ""}</td>
+    </tr>`;
+});
+appData.innerHTML = html;
+
+</script>
+
+</body>
+</html>

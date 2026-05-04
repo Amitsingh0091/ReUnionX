@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+<style>
+body { margin:0; font-family:Segoe UI; background:#f4f7fb; }
+.header { background:linear-gradient(120deg,#2c3e50,#4ca1af); color:#fff; padding:20px; font-size:24px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.container { padding:20px; }
+.event-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; }
+.card { background:#fff; padding:20px; border-radius:10px; box-shadow:0 5px 12px rgba(0,0,0,0.1); }
+.btn { padding:8px 12px; background:#4ca1af; color:#fff; border:none; cursor:pointer; border-radius:5px; }
+.btn:hover{ background:#2c3e50; }
+
+.modal { position:fixed; top:0; left:0; width:100%; height:100%; display:none; justify-content:center; align-items:center; background:rgba(0,0,0,0.6); }
+.modal-box { background:#fff; padding:20px; border-radius:10px; width:300px; }
+.modal-box input { width:100%; margin:8px 0; padding:8px; }
+
+.dashboard { display:none; }
+table{ width:100%; border-collapse:collapse; background:#fff; }
+th,td{ border:1px solid #ccc; padding:10px; text-align:left; }
+
+.myEventsBox { margin-top:15px; background:#fff; padding:15px; border-radius:8px; display:none; }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+Events
+<div>
+<button class="btn" onclick="showDashboard()">All Registrations</button>
+<button class="btn" onclick="openMyEvents()">My Registered Events</button>
+</div>
+</div>
+
+<div class="container" id="eventSection">
+<div class="event-grid" id="events"></div>
+
+<div class="myEventsBox" id="myEventsBox">
+<h3>Your Registered Events</h3>
+<input id="searchRoll" placeholder="Enter Roll No">
+<button class="btn" onclick="findMyEvents()">Check</button>
+<div id="myResult"></div>
+</div>
+
+</div>
+
+<div class="container dashboard" id="dashboardSection">
+<h2>Registered Students</h2>
+<button class="btn" onclick="goBack()">⬅ Back</button>
+<table>
+<tr><th>Name</th><th>Email</th><th>Roll</th><th>Course</th><th>Event</th></tr>
+<tbody id="data"></tbody>
+</table>
+</div>
+
+<div class="modal" id="modal">
+<div class="modal-box">
+<h3>Register</h3>
+<input id="name" placeholder="Full Name">
+<input id="email" placeholder="Email">
+<input id="roll" placeholder="Roll No">
+<input id="course" placeholder="Course">
+<button class="btn" onclick="saveData()">Submit</button>
+<button class="btn" onclick="closeModal()">Close</button>
+</div>
+</div>
+
+<script>
+let selectedEvent = "";
+
+const events = [
+"Annual Alumni Meet | Main Auditorium",
+"Tech Talk | Seminar Hall A",
+"Career Guidance | Lecture Hall 3",
+"Startup Meetup | Innovation Lab",
+"Networking Event | Conference Room",
+"AI Workshop | Lab 2",
+"Guest Lecture | Hall 5",
+"Cultural Meet | Open Theatre",
+"Placement Training | Training Hall",
+"Hackathon | Coding Lab",
+"Alumni Interaction | Room 1",
+"Leadership Seminar | Hall B",
+"Resume Session | Room 2",
+"Entrepreneur Talk | Business Hall",
+"Industry Connect | Conf Hall",
+"Skill Dev | Lab 1",
+"Motivation | Hall 4",
+"Panel Talk | Stage",
+"Internship Fair | Expo Hall",
+"Farewell | Main Hall"
+];
+
+const container = document.getElementById("events");
+
+events.forEach((e)=>{
+container.innerHTML += `
+<div class="card">
+<h3>${e.split('|')[0]}</h3>
+<p>${e.split('|')[1]}</p>
+<button class="btn" onclick="openModal('${e}')">Register</button>
+</div>`;
+});
+
+function openModal(event){
+selectedEvent = event;
+document.getElementById("modal").style.display="flex";
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+// ✅ Duplicate रोकने वाला logic
+function saveData(){
+const name=document.getElementById("name").value.trim();
+const email=document.getElementById("email").value.trim();
+const roll=document.getElementById("roll").value.trim();
+const course=document.getElementById("course").value.trim();
+
+if(!name || !email || !roll || !course){
+alert("Please fill all fields");
+return;
+}
+
+let data = JSON.parse(localStorage.getItem("registrations")) || [];
+
+// 👉 check duplicate (same roll + same event)
+const alreadyRegistered = data.some(d => d.roll === roll && d.event === selectedEvent);
+
+if(alreadyRegistered){
+alert("You already registered for this event!");
+return;
+}
+
+data.push({name,email,roll,course,event:selectedEvent});
+localStorage.setItem("registrations", JSON.stringify(data));
+
+closeModal();
+alert("Registered Successfully!");
+}
+
+function showDashboard(){
+document.getElementById("eventSection").style.display="none";
+document.getElementById("dashboardSection").style.display="block";
+
+const data = JSON.parse(localStorage.getItem("registrations")) || [];
+const tbody = document.getElementById("data");
+tbody.innerHTML = "";
+
+data.forEach(d=>{
+    tbody.innerHTML += `<tr>
+    <td>${d.name}</td>
+    <td>${d.email}</td>
+    <td>${d.roll}</td>
+    <td>${d.course}</td>
+    <td>${d.event}</td>
+    </tr>`;
+});
+}
+
+function goBack(){
+document.getElementById("dashboardSection").style.display="none";
+document.getElementById("eventSection").style.display="block";
+}
+
+// ✅ FIX: My Events properly open + toggle
+function openMyEvents(){
+const box = document.getElementById("myEventsBox");
+box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+function findMyEvents(){
+const roll = document.getElementById("searchRoll").value.trim();
+const data = JSON.parse(localStorage.getItem("registrations")) || [];
+
+const userEvents = data.filter(d => d.roll === roll);
+
+const resultDiv = document.getElementById("myResult");
+
+if(userEvents.length === 0){
+resultDiv.innerHTML = "<p>No events found</p>";
+return;
+}
+
+let html = `<p><b>Total Events Registered: ${userEvents.length}</b></p>`;
+userEvents.forEach(e => {
+html += `<p>• ${e.event}</p>`;
+});
+
+resultDiv.innerHTML = html;
+}
+</script>
+
+</body>
+</html>

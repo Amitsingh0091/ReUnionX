@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <title>AI Alumni Management System</title>
+   <style>
+
+:root{
+    --bg:linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    --text:#fff;
+}
+
+body.light{
+    --bg:#f5f7fa;
+    --text:#111;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.4s;
+}
+
+header {
+    padding: 15px 60px;
+    backdrop-filter: blur(10px);
+    background: rgba(10, 25, 47, 0.7);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: #64ffda;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text);
+    position: relative;
+}
+
+.nav-links a::after {
+    content: "";
+    width: 0%;
+    height: 2px;
+    background: #64ffda;
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    transition: 0.4s;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+.toggle-btn{
+    margin-left:20px;
+    padding:6px 12px;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+.hero {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 45px;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 12px 25px;
+    border-radius: 25px;
+    background: #64ffda;
+    color: #000;
+    text-decoration: none;
+}
+
+.features {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.feature-box {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 280px;
+    padding: 25px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.05);
+}
+
+.about {
+    padding: 50px 20px;
+    text-align: center;
+}
+
+footer {
+    padding: 15px;
+    text-align: center;
+    background: rgba(0,0,0,0.4);
+}
+
+   </style>
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <h2 class="logo">AI Alumni</h2>
+            <div style="display:flex;align-items:center;">
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="signin-page.html">Login</a></li>
+                <li><a href="registation.html">Register</a></li>
+            </ul>
+            <button class="toggle-btn" id="themeToggle" onclick="toggleMode()">🌙</button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div>
+            <h1>Welcome to AI Alumni Management System</h1>
+            <p>Connect with alumni, explore job opportunities, and grow your network.</p>
+            <a href="signin-page.html" class="btn">Get Started</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2>Our Features</h2>
+        <div class="feature-box">
+            <div class="card">
+                <h3>🔍 Smart Alumni Search</h3>
+                <p>Find alumni based on company, skills, and location.</p>
+            </div>
+
+            <div class="card">
+                <h3>💼 Job Opportunities</h3>
+                <p>Get job and internship recommendations from alumni.</p>
+            </div>
+
+            <div class="card">
+                <h3>🤖 AI Chatbot</h3>
+                <p>Get instant help and guidance using our smart AI assistant.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about">
+        <h2>About Project</h2>
+        <p>
+            This AI-based Alumni Management System helps students connect with alumni,
+            explore career paths, and build professional relationships using smart technology.
+        </p>
+    </section>
+
+    <footer>
+        <p>© 2026 AI Alumni Management System | All Rights Reserved</p>
+    </footer>
+
+<script>
+// Load saved theme
+(function(){
+    const saved = localStorage.getItem('theme');
+    const btn = document.getElementById('themeToggle');
+    if(saved === 'light'){
+        document.body.classList.add('light');
+        if(btn) btn.textContent = '☀️';
+    } else {
+        if(btn) btn.textContent = '🌙';
+    }
+})();
+
+function toggleMode(){
+    const btn = document.getElementById('themeToggle');
+    document.body.classList.toggle('light');
+    const isLight = document.body.classList.contains('light');
+
+    // Save preference
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+
+    // Change icon
+    if(btn){
+        btn.textContent = isLight ? '☀️' : '🌙';
+    }
+}
+</script>
+
+</body>
+</html>

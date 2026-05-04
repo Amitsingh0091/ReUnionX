@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Applicants Data</title>
+
+<style>
+body{font-family:Arial;background:#f4f6f9;margin:0;padding:20px;}
+
+h2{text-align:center;}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+}
+
+th,td{
+    padding:10px;
+    border:1px solid #ccc;
+    text-align:center;
+}
+
+th{
+    background:#2c3e50;
+    color:white;
+}
+</style>
+</head>
+
+<body>
+
+<h2>All Applicants</h2>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Course</th>
+<th>Session</th>
+<th>Experience</th>
+<th>Skills</th>
+<th>Job</th>
+<th>Company</th>
+<th>Resume</th>
+</tr>
+</thead>
+
+<tbody id="data"></tbody>
+
+</table>
+
+<script>
+
+let applicants = JSON.parse(localStorage.getItem("applications")) || [];
+
+let html = "";
+
+applicants.forEach(a=>{
+    html += `
+    <tr>
+        <td>${a.name}</td>
+        <td>${a.course}</td>
+        <td>${a.session}</td>
+        <td>${a.experience}</td>
+        <td>${a.skills}</td>
+        <td>${a.job.title}</td>
+        <td>${a.job.company}</td>
+        <td>
+            ${a.resume ? `<a href="${a.resume}" target="_blank">View</a>` : "No File"}
+        </td>
+    </tr>
+    `;
+});
+
+document.getElementById("data").innerHTML = html;
+
+</script>
+
+</body>
+</html>

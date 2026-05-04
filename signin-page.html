@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alumni Login</title>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<style>
+/* SAME CSS (NO CHANGE) */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif;}
+
+body{
+    height:100vh;
+    display:flex;
+    background:linear-gradient(270deg,#667eea,#764ba2,#00c6ff,#0072ff);
+    background-size:600% 600%;
+    animation:bgMove 10s ease infinite;
+}
+
+@keyframes bgMove{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+.left{
+    width:50%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:#fff;
+}
+
+.left img{
+    width:600px;
+    height:220px;
+    object-fit:cover;
+    border-radius:15px;
+    padding:5px;
+    background:linear-gradient(45deg,#ff00cc,#3333ff,#00ffcc);
+    background-size:300%;
+    animation:borderMove 5s linear infinite;
+    margin-bottom:20px;
+}
+
+@keyframes borderMove{
+    0%{background-position:0%;}
+    100%{background-position:300%;}
+}
+
+.right{
+    width:50%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.container{
+    width:350px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(15px);
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.3);
+    color:#fff;
+}
+
+h2{text-align:center;margin-bottom:20px;}
+
+.input-box{position:relative;margin:15px 0;}
+
+.input-box input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:rgba(255,255,255,0.2);
+    color:#fff;
+    outline:none;
+}
+
+.input-box i{
+    position:absolute;
+    right:10px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#fff;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(135deg,#ff7eb3,#ff758c);
+    color:#fff;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+.links{text-align:center;margin-top:10px;}
+
+.links span{
+    display:block;
+    font-size:13px;
+    cursor:pointer;
+    margin-top:5px;
+    color:#fff;
+}
+
+.hidden{display:none;}
+</style>
+</head>
+
+<body>
+
+<div class="left">
+    <img src="iimtcollege.jpeg">
+    <h1>Welcome Alumni</h1>
+    <p>Connect • Grow • Network</p>
+</div>
+
+<div class="right">
+<div class="container">
+
+<!-- LOGIN -->
+<div id="loginBox">
+    <h2>Sign In</h2>
+
+    <div class="input-box">
+        <input type="email" id="loginEmail" placeholder="Email">
+    </div>
+
+    <div class="input-box">
+        <input type="password" id="loginPass" placeholder="Password">
+        <i class="fa fa-eye" onclick="togglePass('loginPass')"></i>
+    </div>
+
+    <button onclick="login()">Login</button>
+
+    <div class="links">
+        <span onclick="showForgot()">Forgot Password?</span>
+        <span onclick="showSignup()">Create Account</span>
+    </div>
+</div>
+
+<!-- SIGNUP -->
+<div id="signupBox" class="hidden">
+    <h2>Sign Up</h2>
+
+    <div class="input-box">
+        <input type="text" id="name" placeholder="Full Name">
+    </div>
+
+    <div class="input-box">
+        <input type="email" id="email" placeholder="Email">
+    </div>
+
+    <div class="input-box">
+        <input type="password" id="pass" placeholder="Password">
+        <i class="fa fa-eye" onclick="togglePass('pass')"></i>
+    </div>
+
+    <button onclick="signup()">Register</button>
+
+    <div class="links">
+        <span onclick="showLogin()">Already have account?</span>
+    </div>
+</div>
+
+<!-- FORGOT -->
+<div id="forgotBox" class="hidden">
+    <h2>Forgot Password</h2>
+
+    <div class="input-box">
+        <input type="email" id="forgotEmail" placeholder="Enter Email">
+    </div>
+
+    <button onclick="resetPass()">Reset</button>
+
+    <div class="links">
+        <span onclick="showLogin()">Back to Login</span>
+    </div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+/* ================= CLEAN FIXED USERS ================= */
+let defaultUsers = [
+    {name:"amit", email:"amit@gmail.com", password:"1111"},
+    {name:"ashwani", email:"ashwani@gmail.com", password:"2222"},
+    {name:"pankaj", email:"pankaj@gmail.com", password:"3333"}
+];
+
+/* reset users every time (IMPORTANT FIX) */
+localStorage.setItem("users", JSON.stringify(defaultUsers));
+
+/* ================= UI ================= */
+function togglePass(id){
+    let input = document.getElementById(id);
+    input.type = input.type === "password" ? "text" : "password";
+}
+
+function showSignup(){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("signupBox").classList.remove("hidden");
+    document.getElementById("forgotBox").classList.add("hidden");
+}
+
+function showLogin(){
+    document.getElementById("loginBox").classList.remove("hidden");
+    document.getElementById("signupBox").classList.add("hidden");
+    document.getElementById("forgotBox").classList.add("hidden");
+}
+
+function showForgot(){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("forgotBox").classList.remove("hidden");
+}
+
+/* ================= LOGIN FIXED ================= */
+function login(){
+    let email = document.getElementById("loginEmail").value.trim();
+    let pass = document.getElementById("loginPass").value.trim();
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    console.log("Entered:", email, pass);
+    console.log("DB Users:", users);
+
+    let found = users.find(u =>
+        u.email === email && u.password === pass
+    );
+
+    if(found){
+        localStorage.setItem("user", JSON.stringify(found));
+        alert("Login Success Welcome " + found.name);
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Invalid email or password");
+    }
+}
+
+/* ================= SIGNUP ================= */
+function signup(){
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    let newUser = {
+        name: document.getElementById("name").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("pass").value.trim()
+    };
+
+    users.push(newUser);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Account Created");
+    showLogin();
+}
+
+/* ================= RESET ================= */
+function resetPass(){
+    alert("Demo mode: reset not enabled");
+}
+
+/* ================= GOOGLE LOGIN (COMMENTED) ================= */
+/*
+function googleLogin(){
+    google.accounts.id.initialize({
+        client_id: "YOUR_GOOGLE_CLIENT_ID",
+        callback: (res)=>console.log(res)
+    });
+    google.accounts.id.prompt();
+}
+*/
+
+</script>
+
+</body>
+</html>

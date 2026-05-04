@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Chatbot</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI';}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(135deg,#0a192f,#112240);
+}
+
+/* Container */
+.chat-container{
+    width:300px;
+    height:400px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border-radius:20px;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 10px 40px rgba(0,0,0,0.4);
+}
+
+/* Header */
+.chat-header{
+    background: linear-gradient(45deg,#64ffda,#00bcd4);
+    padding:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:bold;
+}
+
+.chat-header button{
+    border:none;
+    padding:6px 10px;
+    border-radius:10px;
+    cursor:pointer;
+    background:#0a192f;
+    color:white;
+}
+
+/* Chat */
+.chat-box{
+    flex:1;
+    padding:10px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+/* Messages */
+.message{
+    padding:5px 10px;
+    border-radius:15px;
+    max-width:75%;
+    animation:fadeIn 0.3s ease;
+}
+
+.user{
+    background:#64ffda;
+    align-self:flex-end;
+}
+
+.bot{
+    background:#e6f1ff;
+}
+
+/* Input */
+.chat-input{
+    display:flex;
+    gap:5px;
+    padding:10px;
+    background:#fff;
+}
+
+.chat-input input{
+    flex:1;
+    padding:10px;
+    border-radius:20px;
+    border:1px solid #ccc;
+}
+
+.chat-input button{
+    border:none;
+    padding:10px 12px;
+    border-radius:50%;
+    cursor:pointer;
+    background:#64ffda;
+    transition:0.3s;
+}
+
+.chat-input button:hover{
+    transform:scale(1.1);
+}
+
+/* Animation */
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+/* Responsive */
+@media(max-width:420px){
+    .chat-container{
+        width:95%;
+        height:90%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <!-- Header -->
+    <div class="chat-header">
+        🤖 AI Assistant
+        <!-- <button onclick="goDashboard()">Dashboard</button> -->
+    </div>
+
+    <!-- Chat -->
+    <div class="chat-box" id="chatBox">
+        <div class="message bot">Hello!👋 How can I help you today?</div>
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input">
+        <input type="text" id="userInput" placeholder="Type or speak...">
+        <button onclick="sendMessage()">➤</button>
+        <button onclick="startVoice()">🎙️</button>
+    </div>
+
+</div>
+
+<script>
+
+// Dashboard Button
+function goDashboard(){
+    window.location.href = "dashboard.html";
+}
+
+// Send Message
+function sendMessage(){
+    let input = document.getElementById("userInput");
+    let msg = input.value.trim();
+    if(msg==="") return;
+
+    let chatBox = document.getElementById("chatBox");
+
+    let userMsg = document.createElement("div");
+    userMsg.className="message user";
+    userMsg.innerText=msg;
+    chatBox.appendChild(userMsg);
+
+    // scroll fix
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    input.value="";
+
+    setTimeout(()=>{
+        let reply = getReply(msg);
+
+        let botMsg = document.createElement("div");
+        botMsg.className="message bot";
+        botMsg.innerText=reply;
+        chatBox.appendChild(botMsg);
+
+        speak(reply);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+    },500);
+}
+
+// Smart Replies (fixed only)
+function getReply(msg){
+    msg = msg.toLowerCase();
+
+    if(msg.includes("hello") || msg.includes("hi")){
+        return "Hello! How can I assist you today?";
+    }
+
+    if(msg.includes("who are you") || msg.includes("tell me about yourself")){
+        return "I’m AI assistant created by Amit Singh.";
+    }
+
+    if(msg.includes("how are you") || msg.includes("tum kon ho")){
+        return "I'm doing great! What about you?";
+    }
+
+    if(msg.includes("what is your name")){
+        return "I’m AI assistant.";
+    }
+
+    if(msg.includes("alumni management system")){
+        return "It is a platform to connect students and alumni for networking and opportunities.";
+    }
+
+    if(msg.includes("features")){
+        return "Login, registration, job posting, event updates, and alumni interaction.";
+    }
+
+    if(msg.includes("register")){
+        return "Click on the register button and fill your details.";
+    }
+
+    if(msg.includes("are you human")){
+        return "No, I am an AI chatbot.";
+    }
+
+    // if(msg.includes("father") || msg.includes("papa")){
+    //     return "Let's keep the conversation respectful.";
+    // }
+
+    if(msg.includes("job")){
+        return "You can explore the latest jobs in the dashboard under the Jobs section";
+    }
+
+    if(msg.includes("alumni")){
+        return "Search alumni using filters like company, role, and location";
+    }
+
+    if(msg.includes("event")){
+        return "Check upcoming alumni events in the Events section";
+    }
+
+    if(msg.includes("help")){
+        return "I can help you with jobs, alumni, events, and more. Just ask";
+    }
+      if(msg.includes("ok")){
+        return "thank you";
+    }    
+
+
+    return "That's interesting! Tell me more";
+}
+
+// Voice Input
+function startVoice(){
+    let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang="en-US";
+    recognition.start();
+
+    recognition.onresult = function(e){
+        let text = e.results[0][0].transcript;
+        document.getElementById("userInput").value=text;
+        sendMessage();
+    };
+}
+
+// Voice Output
+function speak(text){
+    let speech = new SpeechSynthesisUtterance(text);
+    speech.lang="en-US";
+    window.speechSynthesis.speak(speech);
+}
+
+</script>
+
+</body>
+</html>
